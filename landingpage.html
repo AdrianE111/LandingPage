@@ -13,8 +13,11 @@
 
       if (sessionStorage.getItem("basdelweb-intro-seen") === "true") {
         document.documentElement.classList.add("intro-seen");
+      } else {
+        document.documentElement.classList.add("intro-running");
       }
     } catch (error) {
+      document.documentElement.classList.add("intro-running");
       console.info("No fue posible consultar el estado de la presentación.", error);
     }
   </script>
@@ -78,7 +81,16 @@
         color 500ms var(--liquid-easing);
     }
 
-    html:not(.intro-seen) .site-header:not(.is-compact) {
+    html.intro-running,
+    html.intro-running body {
+      overflow: hidden;
+    }
+
+    html.intro-running body {
+      background: #ffffff;
+    }
+
+    html.intro-running .site-header:not(.is-compact) {
       position: fixed;
       z-index: 1000;
       inset: 0;
@@ -87,8 +99,13 @@
       overflow: hidden;
     }
 
-    html:not(.intro-seen) .site-header:not(.is-compact) ~ main,
-    html:not(.intro-seen) .site-header:not(.is-compact) ~ footer {
+    html.intro-running .site-header.is-compact {
+      position: fixed;
+      inset: 0 0 auto;
+    }
+
+    html.intro-running main,
+    html.intro-running footer {
       display: none;
     }
 
@@ -129,56 +146,52 @@
       opacity: 0;
     }
 
-    .welcome-sequence {
-      position: absolute;
-      z-index: 2;
-      top: 50%;
-      left: 50%;
-      display: flex;
-      width: min(94vw, 900px);
-      align-items: center;
-      justify-content: center;
-      gap: clamp(0.25rem, 1vw, 0.75rem);
-      color: var(--color-text);
+    .intro-only {
+      display: none;
+    }
+
+    html.intro-running .logo .intro-only {
+      display: block;
+    }
+
+    .intro-temporary-text {
+      fill: currentColor;
       font-family: "Product Sans", Arial, sans-serif;
-      font-size: clamp(0.85rem, 4vw, 3rem);
+      font-size: 80px;
       font-weight: 500;
-      line-height: 1.1;
-      text-align: center;
-      transform: translate(-50%, -50%);
-      transition: opacity 450ms var(--liquid-easing), visibility 0s linear 450ms;
-      white-space: nowrap;
+      white-space: pre;
     }
 
-    .intro-bracket {
-      width: clamp(0.75rem, 2.5vw, 1.875rem);
-      height: clamp(1.575rem, 5.25vw, 3.9375rem);
-      flex: 0 0 auto;
-      overflow: visible;
-    }
-
-    .intro-bracket path {
+    .intro-accent {
       fill: none;
       stroke: currentColor;
-      stroke-linecap: square;
-      stroke-linejoin: miter;
-      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-width: 6;
     }
 
-    .site-header:not([data-phase="loading"]) .welcome-sequence,
-    .intro-seen .welcome-sequence {
-      visibility: hidden;
-      opacity: 0;
-    }
-
-    .typing-cursor {
-      display: inline-block;
-      width: 0.08em;
-      height: 0.9em;
-      margin-left: 0.08em;
-      background: currentColor;
-      vertical-align: -0.08em;
+    .intro-cursor {
+      fill: currentColor;
       animation: cursor-blink 650ms steps(1, end) infinite;
+    }
+
+    html.intro-running .site-header[data-phase="loading"] .home-reload {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    html.intro-running .logo {
+      width: min(94vw, 62rem);
+    }
+
+    .site-header.is-measuring-compact .logo {
+      transition: none !important;
+    }
+
+    html.intro-running .site-nav {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     @keyframes cursor-blink {
@@ -636,6 +649,87 @@
       color: #ffffff;
     }
 
+    .footer-logo-column {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  margin-left: 2.4rem;
+}
+
+.copyright-bar {
+  width: 100%;
+  min-height: clamp(24px, 4vw, 32px);
+  padding: 6px 16px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  color: #000000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Product Sans", Arial, sans-serif;
+  font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.copyright-bar__text {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  column-gap: 0.28em;
+  row-gap: 0.1em;
+}
+
+.copyright-bar__group {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.copyright-bar__symbol {
+  display: inline-block;
+  flex: 0 0 auto;
+  font-family: Arial, "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.footer-nav a {
+  color: rgb(255 255 255 / 58%);
+  font-family: "Product Sans", Arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    color 220ms var(--liquid-easing),
+    transform 220ms var(--liquid-easing);
+}
+
+.footer-nav a:hover {
+  color: #ffffff;
+  transform: translateX(0.3rem);
+}
+
     .footer-logo {
       display: block;
       width: 100%;
@@ -819,17 +913,17 @@
         min-height: auto;
         padding-block: clamp(1.5rem, 7vw, 2.5rem);
       }
-
-      #logo-oficial {
+      /*Cambio: Reduccion del espacio de arriba del titulo */
+     #logo-oficial {
         height: auto;
         min-height: auto;
         padding-block:
-          clamp(1.5rem, 7vw, 2.5rem)
+          clamp(0.25rem, 1.5vw, 0.75rem)
           clamp(3.75rem, 16vw, 6rem);
       }
 
       .official-logo-container {
-        width: min(90vw, 38rem);
+        width: min(74vw, 30rem);
       }
 
       .contact-footer {
@@ -840,6 +934,14 @@
       .footer-logo-container {
         width: min(88vw, 28rem);
         justify-self: center;
+      }
+
+      .footer-nav {
+        display: none;
+      }
+
+      .footer-logo-column {
+        align-items: center;
       }
     }
 
@@ -861,8 +963,1231 @@
 
       .logo,
       .loading-indicator,
-      .typing-cursor {
+      .typing-cursor,
+      .intro-cursor {
         animation: none;
+      }
+    }
+
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes contentFade {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes meshFloat {
+      from {
+        transform: scale(1.02) translate3d(-8px, -6px, 0);
+      }
+      to {
+        transform: scale(1.08) translate3d(10px, 8px, 0);
+      }
+    }
+
+    /* ================================
+       HU-3 · QUÉ HACEMOS
+    ================================ */
+
+    #proyecto {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(2rem, 5vw, 4rem);
+      min-height: auto;
+      padding-block: clamp(4rem, 8vw, 7rem);
+      overflow: hidden;
+    }
+
+    #proyecto .band-title {
+      width: 100%;
+    }
+
+    .proyecto-minimalista {
+      width: min(100%, 72rem);
+      display: grid;
+      grid-template-columns: minmax(18rem, 0.9fr) minmax(0, 1.1fr);
+      border: 1px solid #111;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 8%);
+      transition: box-shadow 280ms ease, border-color 280ms ease;
+      animation: cardReveal 700ms ease both;
+    }
+
+    .proyecto-minimalista:hover {
+      box-shadow: 0 2rem 4.5rem rgb(0 0 0 / 12%);
+      border-color: #000;
+    }
+
+    .proyecto-minimalista__contenido {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: clamp(2rem, 5vw, 4rem);
+      animation: contentFade 850ms ease 120ms both;
+    }
+
+    .proyecto-minimalista__visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: clamp(24rem, 42vw, 34rem);
+      background: #0a0a0a;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    
+
+    .proyecto-minimalista__visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.22;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-image: url("data:image/svg+xml;utf8,\ <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800' fill='none'>\ <g stroke='white' stroke-width='1'>\ <path d='M0 70 L120 20 L230 110 L340 40 L480 130 L610 45 L800 140'/>\ <path d='M0 240 L120 20'/>\ <path d='M0 240 L230 110 L320 250 L480 130 L610 260 L800 140'/>\ <path d='M230 110 L480 130'/>\ <path d='M320 250 L610 260'/>\ <path d='M610 45 L610 260'/>\ <path d='M90 390 L220 310 L360 420 L500 290 L680 410 L800 320'/>\ <path d='M0 520 L220 310'/>\ <path d='M0 520 L360 420 L500 290 L680 410 L800 600'/>\ <path d='M220 310 L500 290'/>\ <path d='M360 420 L680 410'/>\ <path d='M120 650 L250 560 L390 700 L560 590 L720 690'/>\ <path d='M0 760 L250 560'/>\ <path d='M250 560 L560 590'/>\ <path d='M390 700 L720 690'/>\ </g></svg>");
+      animation: meshFloat 12s ease-in-out infinite alternate;
+    }
+
+
+    .proyecto-minimalista__visual::after {
+      position: absolute;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      color: white;
+      font-family: monospace;
+      font-size: 0.72rem;
+      opacity: 0.55;
+    }
+
+/*Cambio*/
+    .proyecto-minimalista__icon {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(66%, 18rem);
+      max-height: 18rem;
+      object-fit: contain;
+      filter: invert(1) grayscale(1);
+      -webkit-user-drag: none;
+      user-select: none;
+      pointer-events: none
+    }
+
+    .proyecto-minimalista__content {
+      grid-area: content;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 4rem);
+    }
+
+    .proyecto-minimalista__descripcion {
+      max-width: 58ch;
+      margin: 0;
+      color: #2b2b2b;
+      font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+      line-height: 1.75;
+    }
+
+    .proyecto-minimalista__tecnologias {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.75rem;
+      width: 100%;
+      margin: 0;
+    }
+
+    .proyecto-tech {
+  --button-background: #ffffff;
+  --button-foreground: #111111;
+  --mesh-opacity: 0.15;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.35rem, 0.8vw, 0.55rem);
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(2.45rem, 4.5vw, 2.9rem);
+  padding: clamp(0.5rem, 1vw, 0.65rem) clamp(0.65rem, 1.4vw, 0.95rem);
+  border: 1px solid #111111;
+  border-radius: 0.55rem;
+  background: var(--button-background);
+  color: var(--button-foreground);
+  font-family: "Product Sans", Arial, sans-serif;
+  font-size: clamp(0.61rem, 1.05vw, 0.76rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    background-color 280ms var(--liquid-easing),
+    color 280ms var(--liquid-easing),
+    border-color 280ms var(--liquid-easing),
+    transform 150ms ease;
+}
+
+    .proyecto-tech--wide {
+      grid-column: span 2;
+    }
+
+    /* Asegurar que el texto se vea completo */
+    .proyecto-tech__label {
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    /* Si quieres un poco más de aire interno */
+    .proyecto-tech {
+      min-height: 46px;
+      padding-inline: 0.9rem;
+    }
+
+    /* En pantallas pequeñas vuelve a tamaño normal */
+    @media (max-width: 700px) {
+      .proyecto-tech--wide {
+        grid-column: span 1;
+      }
+    }
+
+    .proyecto-tech__mesh {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      color: currentColor;
+      opacity: var(--mesh-opacity);
+      transform: scale(1.04);
+      transform-origin: center;
+      pointer-events: none;
+      transition: opacity 280ms ease, transform 650ms var(--liquid-easing);
+    }
+
+    .proyecto-tech__mesh path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 0.7;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .proyecto-tech__icon {
+      position: relative;
+      z-index: 1;
+      width: clamp(0.9rem, 1.5vw, 1.1rem);
+      height: clamp(0.9rem, 1.5vw, 1.1rem);
+      flex: 0 0 auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.6;
+    }
+
+    .proyecto-tech__label {
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    .proyecto-tech.is-active {
+      --button-background: #000000;
+      --button-foreground: #ffffff;
+      --mesh-opacity: 0.22;
+      background: var(--button-background);
+      color: #ffffff;
+      border-color: #111111;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .proyecto-tech:hover {
+        --button-background: #ededed;
+        --mesh-opacity: 0.28;
+        color: #000000;
+      }
+
+      .proyecto-tech:hover .proyecto-tech__mesh {
+        transform: translate3d(0.3rem, -0.12rem, 0) scale(1.1);
+      }
+
+      .proyecto-tech.is-active:hover {
+        --button-background: #202020;
+        color: #ffffff;
+      }
+    }
+
+    .proyecto-tech:active {
+      transform: scale(0.975);
+    }
+
+    .proyecto-tech:focus-visible {
+      outline: 3px solid var(--color-focus);
+      outline-offset: 3px;
+    }
+
+    .proyecto-minimalista__detalle {
+      position: relative;
+      width: 100%;
+      min-height: 10.5rem;
+      padding: 1.1rem 1.25rem;
+      border: 1px solid rgb(17 17 17 / 18%);
+      border-radius: 0.8rem;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .proyecto-minimalista__detalle::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, #111111 0%, rgb(17 17 17 / 18%) 70%, transparent 100%);
+      opacity: 0.9;
+    }
+
+    .proyecto-minimalista__detalle-contenido {
+      display: grid;
+      gap: 0.5rem;
+      opacity: 1;
+      transition: opacity 160ms ease;
+    }
+
+    .proyecto-minimalista__detalle-contenido.is-changing {
+      opacity: 0;
+    }
+
+    .proyecto-minimalista__detalle-titulo {
+      margin: 0;
+      color: #111111;
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      font-weight: 500;
+    }
+
+    .proyecto-minimalista__detalle-texto {
+      max-width: 50ch;
+      margin: 0;
+      color: #555555;
+      font-size: clamp(0.85rem, 1.15vw, 0.95rem);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+      #proyecto {
+        padding-block: clamp(2.75rem, 8vw, 4.5rem);
+      }
+
+      .proyecto-minimalista {
+        grid-template-columns: 1fr;
+      }
+
+      .proyecto-minimalista__contenido {
+        gap: 1.25rem;
+        padding: clamp(1.5rem, 5vw, 2.25rem);
+      }
+
+      .proyecto-minimalista__tecnologias {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .proyecto-tech {
+        min-height: 50px;
+      }
+
+      .proyecto-minimalista__visual {
+        min-height: clamp(14rem, 48vw, 20rem);
+        border-bottom: 1px solid #111;
+      }
+
+      .proyecto-minimalista__icon {
+        width: min(42vw, 12rem);
+      }
+    }
+
+    @media (max-width: 520px) {
+      #proyecto {
+        padding-inline: 1rem;
+      }
+
+      .proyecto-minimalista__contenido {
+        padding: 1.25rem;
+      }
+
+      .proyecto-minimalista__descripcion {
+        margin: 0;
+        font-size: 0.96rem;
+        line-height: 1.65;
+      }
+
+      .proyecto-minimalista__tecnologias {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .proyecto-tech {
+        min-height: 3rem;
+        padding: 0.72rem 0.8rem;
+        font-size: 0.68rem;
+      }
+
+      .proyecto-tech__label {
+        white-space: normal;
+      }
+
+      .proyecto-minimalista__detalle {
+        padding: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .proyecto-minimalista,
+      .proyecto-tech,
+      .proyecto-tech__mesh,
+      .proyecto-minimalista__detalle-contenido {
+        transition: none;
+        animation: none;
+      }
+    }
+
+    /* ================================
+       HU-2 · NUESTRO EQUIPO / FLIP CARD
+    ================================ */
+
+    #equipo {
+      --equipo-card-radius: 0.85rem;
+      --equipo-flip-duration: 1150ms;
+      --equipo-flip-easing: cubic-bezier(0.65, 0, 0.35, 1);
+      --equipo-photo-ratio: 4 / 5;
+      position: relative;
+      width: 100%;
+      height: auto;
+      min-height: auto;
+      padding-block: clamp(3.5rem, 7vw, 6rem);
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: clamp(2.5rem, 5vw, 4rem);
+      overflow: visible;
+      isolation: isolate;
+    }
+
+    #equipo::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      inset: 0;
+      background-image:
+        linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+      background-position: center;
+      background-size: 3.25rem 3.25rem;
+      mask-image: linear-gradient(to bottom, transparent, #000 15%, #000 85%, transparent);
+      pointer-events: none;
+    }
+
+    #equipo::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: radial-gradient(circle at 50% 48%, rgb(255 255 255 / 5%), transparent 46%);
+      pointer-events: none;
+    }
+
+    #equipo .band-title {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .equipo-layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .equipo-grid {
+      --equipo-grid-gap: clamp(0.9rem, 1.55vw, 1.4rem);
+      --equipo-grid-half-gap: clamp(0.45rem, 0.775vw, 0.7rem);
+      display: grid;
+      width: min(100%, 112rem);
+      max-width: none;
+      grid-column: 1;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--equipo-grid-gap);
+      justify-self: center;
+      align-items: stretch;
+      perspective: 1800px;
+      perspective-origin: 50% 50%;
+    }
+
+    .equipo-card {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      max-width: clamp(16rem, 18vw, 21rem);
+      min-width: 0;
+      border-radius: var(--equipo-card-radius);
+      background: transparent;
+      color: inherit;
+      aspect-ratio: 4 / 7;
+      perspective: 1400px;
+      perspective-origin: center;
+      transform: translate3d(0, 0, 0);
+      transform-style: preserve-3d;
+      transition: transform 480ms var(--liquid-easing);
+      justify-self: center;
+    }
+
+    .equipo-card::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 12% 7% -6%;
+      border-radius: 50%;
+      background: rgb(255 255 255 / 18%);
+      opacity: 0;
+      filter: blur(1.8rem);
+      pointer-events: none;
+      transform: translate3d(0, 0.8rem, -2rem) scale(0.88);
+      transition:
+        opacity 450ms ease,
+        transform 650ms var(--liquid-easing);
+    }
+
+    .equipo-card__inner {
+      position: absolute;
+      inset: 0;
+      display: block;
+      border-radius: inherit;
+      transform: translateZ(0) rotateY(0deg);
+      transform-origin: center center;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      transition: transform var(--equipo-flip-duration) var(--equipo-flip-easing);
+      will-change: transform;
+    }
+
+    .equipo-card.is-flipped .equipo-card__inner {
+      transform: translateZ(0) rotateY(180deg);
+    }
+
+    .equipo-card__face {
+      position: absolute;
+      inset: 0;
+      display: block;
+      border: 0;
+      border-radius: inherit;
+      overflow: hidden;
+      background-color: #f7f7f4;
+      background-image:
+        linear-gradient(rgb(17 17 17 / 5%) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(17 17 17 / 5%) 1px, transparent 1px);
+      background-size: 1.65rem 1.65rem;
+      color: #111111;
+      box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 28%);
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      isolation: isolate;
+      transition: box-shadow 500ms var(--liquid-easing);
+      will-change: transform;
+    }
+
+    .equipo-card__front {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 0.5rem;
+      padding: 0.5rem;
+      transform: rotateY(0deg) translateZ(1px);
+    }
+
+    .equipo-card__photo {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 0;
+      border: 0;
+      border-radius: calc(var(--equipo-card-radius) - 0.35rem);
+      overflow: hidden;
+      background: #f2f2f0;
+      aspect-ratio: var(--equipo-photo-ratio);
+      transform: translateZ(1px);
+    }
+
+    .equipo-card__photo::before {
+      content: "";
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: #ffffff;
+      box-shadow: 0 0 0.8rem rgb(255 255 255 / 80%);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-1rem);
+    }
+
+    .equipo-card__photo::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgb(0 0 0 / 12%), transparent 38%),
+        repeating-linear-gradient(to bottom, transparent 0 3px, rgb(255 255 255 / 2.5%) 3px 4px);
+      pointer-events: none;
+    }
+
+    .equipo-card__photo img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      background: #f2f2f0;
+      filter: grayscale(100%);
+      transform: scale(1) translateZ(0);
+      transition:
+        filter 700ms ease-in-out,
+        transform 700ms ease-in-out;
+      will-change: filter, transform;
+      -webkit-user-drag: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .equipo-card__photo-fallback {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: grid;
+      padding: 1rem;
+      place-items: center;
+      background:
+        linear-gradient(rgb(17 17 17 / 6%) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(17 17 17 / 6%) 1px, transparent 1px),
+        #f2f2f0;
+      background-size: 1.25rem 1.25rem;
+      color: rgb(17 17 17 / 58%);
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      line-height: 1.4;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .equipo-card__photo.is-missing img {
+      display: none;
+    }
+
+    .equipo-card__information {
+      position: relative;
+      display: flex;
+      min-height: 0;
+      padding:
+        clamp(0.45rem, 0.9vw, 0.75rem)
+        clamp(0.65rem, 1.25vw, 0.95rem);
+      padding-bottom: clamp(0.75rem, 1.2vw, 1rem);
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.28rem;
+      border: 0;
+      background: transparent;
+      color: #111111;
+      text-align: center;
+    }
+
+    .equipo-card__name,
+    .equipo-card__role,
+    .equipo-card__quote {
+      position: relative;
+      z-index: 2;
+      display: block;
+      margin: 0;
+    }
+
+    .equipo-card__name {
+      display: grid;
+      min-height: 2.4em;
+      flex: 0 0 auto;
+      place-items: center;
+      color: #111111;
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: clamp(0.78rem, 1.15vw, 1rem);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .equipo-card__role {
+      color: rgb(17 17 17 / 62%);
+      font-size: clamp(0.58rem, 0.78vw, 0.7rem);
+      letter-spacing: 0.1em;
+      line-height: 1.4;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .equipo-card__toggle {
+      position: relative;
+      z-index: 4;
+      display: inline-flex;
+      min-height: 2rem;
+      margin-top: 0.3rem;
+      padding: 0.46rem 0.72rem;
+      border: 0;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      gap: 0.38rem;
+      background: #111111;
+      color: #ffffff;
+      font: inherit;
+      font-size: clamp(0.56rem, 0.72vw, 0.68rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transform: none;
+      transition:
+        background-color 240ms ease,
+        color 240ms ease,
+        transform 240ms ease,
+        box-shadow 240ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .equipo-card__toggle--front {
+      margin-top: auto;
+    }
+
+    .equipo-card__toggle svg {
+      display: block;
+      width: 0.875rem;
+      height: 0.875rem;
+      flex: 0 0 auto;
+      overflow: visible;
+      transform-origin: center;
+      animation: equipo-icono-giro 3.2s ease-in-out infinite;
+      shape-rendering: geometricPrecision;
+    }
+
+    .equipo-card__toggle path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .equipo-card__toggle:hover {
+      background: #303030;
+      transform: translateY(-1px);
+    }
+
+    .equipo-card__toggle:active {
+      transform: translateY(0);
+    }
+
+    .equipo-card__toggle:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 3px rgb(255 255 255 / 82%);
+    }
+
+    .equipo-card__back {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      padding: clamp(1.15rem, 2.25vw, 2rem);
+      align-items: center;
+      justify-items: center;
+      color: #111111;
+      transform: rotateY(180deg) translateZ(1px);
+    }
+
+    .equipo-card__back .equipo-card__toggle {
+      align-self: end;
+      margin-top: 0.8rem;
+    }
+
+    .equipo-card__mesh {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: #111111;
+      opacity: 0.12;
+      pointer-events: none;
+      transform: scale(1);
+    }
+
+    .equipo-card__mesh path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 0.75;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .equipo-card__quote {
+      max-width: 17ch;
+      align-self: center;
+      opacity: 1;
+      color: #111111;
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: clamp(1.05rem, 1.55vw, 1.55rem);
+      font-weight: 500;
+      line-height: 1.25;
+      text-align: center;
+      transform: translate3d(0, 0, 2rem);
+    }
+
+    .equipo-card__quote::before {
+      content: "\201C";
+      display: block;
+      margin-bottom: 0.4rem;
+      color: #111111;
+      font-family: Georgia, serif;
+      font-size: 3em;
+      line-height: 0.5;
+    }
+
+    @keyframes equipo-scanner {
+      0% {
+        opacity: 0;
+        transform: translateY(-1rem);
+      }
+
+      20%,
+      70% {
+        opacity: 0.85;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(24rem);
+      }
+    }
+
+    @keyframes equipo-icono-giro {
+      0%,
+      72%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      82% {
+        transform: rotate(-10deg);
+      }
+
+      92% {
+        transform: rotate(6deg);
+      }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .equipo-card:hover,
+      .equipo-card.is-flipped {
+        z-index: 4;
+        transform: translate3d(0, -0.65rem, 0);
+      }
+
+      .equipo-card:hover::after,
+      .equipo-card.is-flipped::after {
+        opacity: 0.75;
+        transform: translate3d(0, 0, -2rem) scale(1);
+      }
+
+      .equipo-card:hover .equipo-card__face,
+      .equipo-card.is-flipped .equipo-card__face {
+        box-shadow: 0 1.8rem 3.5rem rgb(0 0 0 / 48%);
+      }
+
+      .equipo-card:not(.is-flipped) .equipo-card__photo:hover::before {
+        animation: equipo-scanner 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .equipo-card:hover:not(.is-flipped) .equipo-card__photo img {
+        filter: grayscale(0%);
+        transform: scale(1.02) translateZ(0);
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .equipo-card__photo img {
+        filter: grayscale(0%);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .equipo-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .equipo-grid {
+        width: min(100%, 52rem);
+        grid-column: 1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .equipo-card {
+        max-width: 24rem;
+        aspect-ratio: 4 / 7;
+      }
+
+      .equipo-card:last-child {
+        width: min(calc(50% - var(--equipo-grid-half-gap)), 24rem);
+        grid-column: 1 / -1;
+        justify-self: center;
+      }
+    }
+
+    @media (max-width: 620px) {
+      #equipo {
+        padding-inline: 1rem;
+      }
+
+      .equipo-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .equipo-grid {
+        --equipo-grid-half-gap: clamp(0.375rem, 1.5vw, 0.55rem);
+        width: 100%;
+        grid-column: 1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(0.75rem, 3vw, 1.1rem);
+        perspective: 1200px;
+      }
+
+      .equipo-card:last-child {
+        width: calc(50% - var(--equipo-grid-half-gap));
+      }
+
+      .equipo-card {
+        max-width: none;
+        aspect-ratio: 3 / 6.4;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .equipo-card {
+        aspect-ratio: 3 / 6.4;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .equipo-grid {
+        width: min(100%, 20rem);
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.1rem;
+      }
+
+      .equipo-card,
+      .equipo-card:last-child {
+        width: min(100%, 20rem);
+        grid-column: auto;
+        aspect-ratio: 3 / 5.2;
+      }
+
+      .equipo-card__information {
+        padding-top: 0.25rem;
+        padding-bottom: clamp(0.75rem, 4vw, 1rem);
+        gap: 0.2rem;
+      }
+
+      .equipo-card__name {
+        min-height: 1.2em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .equipo-card,
+      .equipo-card::after,
+      .equipo-card__face,
+      .equipo-card__photo img,
+      .equipo-card__mesh,
+      .equipo-card__quote,
+      .equipo-card__toggle,
+      .equipo-card__toggle svg {
+        animation: none;
+        transition: none;
+      }
+
+      .equipo-card__inner {
+        transition-duration: 650ms;
+      }
+
+      .equipo-card__photo::before {
+        display: none;
+      }
+    }
+    /* ================================
+       HU-4 · CONTACTO
+    ================================ */
+
+    .contact-link.is-copied {
+      background: #3ddc84;
+      color: #000000;
+      border-color: #3ddc84;
+    }
+
+    .contact-content {
+      display: flex;
+      width: 100%;
+      max-width: 62rem;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(2rem, 5vw, 3.5rem);
+    }
+
+    .contact-grid {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(1rem, 2.5vw, 1.75rem);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .contact-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.65rem;
+      padding: clamp(1.25rem, 2.5vw, 1.75rem);
+      border: 1px solid rgb(255 255 255 / 18%);
+      border-radius: 0.85rem;
+      background: rgb(255 255 255 / 3%);
+      overflow: hidden;
+      isolation: isolate;
+      animation: cardReveal 650ms var(--liquid-easing) both;
+      animation-delay: var(--contact-delay, 0ms);
+      transition:
+        border-color 280ms var(--liquid-easing),
+        background-color 280ms var(--liquid-easing);
+      flex: 1 1 15rem;  /* nueva linea */
+      max-width: 18rem;  /* nueva linea */  
+    }
+
+    .contact-card__mesh {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      color: #ffffff;
+      opacity: 0.08;
+      pointer-events: none;
+      transform: scale(1.04);
+      transition: opacity 280ms ease, transform 650ms var(--liquid-easing);
+    }
+
+    .contact-card__mesh path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 0.7;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .contact-card__icon {
+      position: relative;
+      z-index: 1;
+      align-self: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      fill: none;
+      stroke: #ffffff;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.6;
+    }
+
+    .contact-card__name {
+      position: relative;
+      z-index: 1;
+      color: #ffffff;
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+      font-weight: 500;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .contact-card__role {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: rgb(255 255 255 / 58%);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact-card__role-icon {
+  width: 0.72rem;
+  height: 0.72rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+    .contact-card__links {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      margin-top: 0.35rem;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid rgb(255 255 255 / 30%);
+      border-radius: 999px;
+      color: #ffffff;
+      font-family: "Product Sans", Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition:
+        background-color 220ms var(--liquid-easing),
+        color 220ms var(--liquid-easing),
+        border-color 220ms var(--liquid-easing),
+        transform 150ms ease;
+    }
+
+    .contact-link__icon {
+      width: 0.9rem;
+      height: 0.9rem;
+      flex: 0 0 auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.6;
+    }
+
+    .contact-link:active {
+      transform: scale(0.96);
+    }
+
+    .contact-link:focus-visible {
+      outline: 3px solid var(--color-focus);
+      outline-offset: 3px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .contact-card:hover {
+        border-color: rgb(255 255 255 / 45%);
+        background: rgb(255 255 255 / 6%);
+      }
+
+      .contact-card:hover .contact-card__mesh {
+        opacity: 0.16;
+        transform: scale(1.1) translate3d(0.3rem, -0.2rem, 0);
+      }
+
+      .contact-link:hover {
+        background: #ffffff;
+        color: #000000;
+        border-color: #ffffff;
+      }
+    }
+
+    @keyframes contact-pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgb(61 220 132 / 55%);
+      }
+      50% {
+        box-shadow: 0 0 0 0.35rem rgb(61 220 132 / 0%);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .contact-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .contact-card,
+      .contact-card__mesh,
+      .contact-link,
+      .contact-card__status {
+        animation: none;
+        transition: none;
       }
     }
   </style>
@@ -871,17 +2196,11 @@
   <header id="inicio" class="site-header" data-phase="loading">
     <h1 class="visually-hidden">BASDELWEB</h1>
     <div class="header-content">
-      <div class="welcome-sequence" aria-label="Bienvenido a Básicos">
-        <svg class="intro-bracket" viewBox="0 0 20 42" aria-hidden="true">
-          <path d="M20 0 L0 21 L20 42" />
-        </svg>
-        <span id="intro-text" aria-hidden="true"></span><span class="typing-cursor" aria-hidden="true"></span>
-        <svg class="intro-bracket" viewBox="0 0 20 42" aria-hidden="true">
-          <path d="M0 0 L20 21 L0 42" />
-        </svg>
+      <div class="welcome-sequence visually-hidden" aria-live="polite" aria-atomic="true">
+        <span id="intro-text">Bienvenido a Básicos</span>
       </div>
 
-      <button id="home-reload" class="home-reload" type="button" aria-label="Recargar la página y volver al inicio">
+      <button id="home-reload" class="home-reload" type="button" aria-label="Recargar la página y volver al inicio" disabled>
         <svg
           class="logo"
           data-state="2"
@@ -895,6 +2214,12 @@
         <desc id="logo-description">Logotipo transformable BAS DEL WEB entre símbolos de código.</desc>
 
         <g id="logo-elements">
+          <g id="intro-elements" class="intro-only" aria-hidden="true">
+            <text id="intro-prefix" class="intro-temporary-text"></text>
+            <path id="intro-accent" class="intro-accent" d="M0 0 L12 -13" />
+            <text id="intro-suffix" class="intro-temporary-text"></text>
+            <rect id="intro-cursor" class="intro-cursor" width="5" height="76" rx="2" />
+          </g>
           <text id="bas-b" class="logo__letter">B</text>
           <text id="bas-a" class="logo__letter">A</text>
           <text id="bas-s" class="logo__letter">S</text>
@@ -989,6 +2314,171 @@
         <span>Nuestro Equipo</span>
         <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M0 0 L20 21 L0 42" /></svg>
       </h2>
+
+      <div class="equipo-layout">
+      <div class="equipo-grid" aria-label="Integrantes del equipo">
+        <!-- Cambia los src por tus fotografias dentro de images/equipo/. -->
+        <article class="equipo-card" data-equipo-card data-persona="Nombre persona uno">
+          <span class="equipo-card__inner">
+            <span id="equipo-frente-01" class="equipo-card__face equipo-card__front" aria-hidden="false">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__photo">
+                <span class="equipo-card__photo-fallback" aria-hidden="true">Fotografía pendiente</span>
+                <img src="images/equipo/persona-01.webp" alt="Fotografía de Nombre persona uno" draggable="false" loading="lazy" decoding="async">
+              </span>
+              <span class="equipo-card__information">
+                <span class="equipo-card__name">Javier Castellanos</span>
+                <span class="equipo-card__role">UX/UI Designer</span>
+                <button class="equipo-card__toggle equipo-card__toggle--front" type="button" data-equipo-toggle aria-controls="equipo-reverso-01" aria-expanded="false" aria-label="Ver frase de Nombre persona uno">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                  <span>Ver frase</span>
+                </button>
+              </span>
+            </span>
+            <span id="equipo-reverso-01" class="equipo-card__face equipo-card__back" aria-hidden="true">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__quote">Si otros ya lo lograron, ¿Por qué no lo intentas tú?</span>
+              <button class="equipo-card__toggle equipo-card__toggle--back" type="button" data-equipo-toggle aria-controls="equipo-frente-01" aria-expanded="false" aria-label="Volver a la fotografía de Nombre persona uno" tabindex="-1">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                <span>Volver</span>
+              </button>
+            </span>
+          </span>
+        </article>
+
+        <article class="equipo-card" data-equipo-card data-persona="Nombre persona dos">
+          <span class="equipo-card__inner">
+            <span id="equipo-frente-02" class="equipo-card__face equipo-card__front" aria-hidden="false">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__photo">
+                <span class="equipo-card__photo-fallback" aria-hidden="true">Fotografía pendiente</span>
+                <img src="images/equipo/persona-02.webp" alt="Fotografía de Nombre persona dos" draggable="false" loading="lazy" decoding="async">
+              </span>
+              <span class="equipo-card__information">
+                <span class="equipo-card__name">Gerardo Avila</span>
+                <span class="equipo-card__role">Frontend Developer</span>
+                <button class="equipo-card__toggle equipo-card__toggle--front" type="button" data-equipo-toggle aria-controls="equipo-reverso-02" aria-expanded="false" aria-label="Ver frase de Nombre persona dos">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                  <span>Ver frase</span>
+                </button>
+              </span>
+            </span>
+            <span id="equipo-reverso-02" class="equipo-card__face equipo-card__back" aria-hidden="true">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__quote">Haz perfecto el momento, no lo esperes.</span>
+              <button class="equipo-card__toggle equipo-card__toggle--back" type="button" data-equipo-toggle aria-controls="equipo-frente-02" aria-expanded="false" aria-label="Volver a la fotografía de Nombre persona dos" tabindex="-1">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                <span>Volver</span>
+              </button>
+            </span>
+          </span>
+        </article>
+
+        <article class="equipo-card" data-equipo-card data-persona="Nombre persona tres">
+          <span class="equipo-card__inner">
+            <span id="equipo-frente-03" class="equipo-card__face equipo-card__front" aria-hidden="false">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__photo">
+                <span class="equipo-card__photo-fallback" aria-hidden="true">Fotografía pendiente</span>
+                <img src="images/equipo/persona-03.webp" alt="Fotografía de Nombre persona tres" draggable="false" loading="lazy" decoding="async">
+              </span>
+              <span class="equipo-card__information">
+                <span class="equipo-card__name">Adrián Escalón</span>
+                <span class="equipo-card__role">Project Manager</span>
+                <button class="equipo-card__toggle equipo-card__toggle--front" type="button" data-equipo-toggle aria-controls="equipo-reverso-03" aria-expanded="false" aria-label="Ver frase de Nombre persona tres">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                  <span>Ver frase</span>
+                </button>
+              </span>
+            </span>
+            <span id="equipo-reverso-03" class="equipo-card__face equipo-card__back" aria-hidden="true">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__quote">La paciencia es una virtud.</span>
+              <button class="equipo-card__toggle equipo-card__toggle--back" type="button" data-equipo-toggle aria-controls="equipo-frente-03" aria-expanded="false" aria-label="Volver a la fotografía de Nombre persona tres" tabindex="-1">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                <span>Volver</span>
+              </button>
+            </span>
+          </span>
+        </article>
+
+        <article class="equipo-card" data-equipo-card data-persona="Nombre persona cuatro">
+          <span class="equipo-card__inner">
+            <span id="equipo-frente-04" class="equipo-card__face equipo-card__front" aria-hidden="false">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__photo">
+                <span class="equipo-card__photo-fallback" aria-hidden="true">Fotografía pendiente</span>
+                <img src="images/equipo/persona-04.webp" alt="Fotografía de Nombre persona cuatro" draggable="false" loading="lazy" decoding="async">
+              </span>
+              <span class="equipo-card__information">
+                <span class="equipo-card__name">Carlos Mendizábal</span>
+                <span class="equipo-card__role">Backend Developer</span>
+                <button class="equipo-card__toggle equipo-card__toggle--front" type="button" data-equipo-toggle aria-controls="equipo-reverso-04" aria-expanded="false" aria-label="Ver frase de Nombre persona cuatro">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                  <span>Ver frase</span>
+                </button>
+              </span>
+            </span>
+            <span id="equipo-reverso-04" class="equipo-card__face equipo-card__back" aria-hidden="true">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__quote">Mi nivel de paciencia depende 100% de si ya tomé café.</span>
+              <button class="equipo-card__toggle equipo-card__toggle--back" type="button" data-equipo-toggle aria-controls="equipo-frente-04" aria-expanded="false" aria-label="Volver a la fotografía de Nombre persona cuatro" tabindex="-1">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                <span>Volver</span>
+              </button>
+            </span>
+          </span>
+        </article>
+
+        <article class="equipo-card" data-equipo-card data-persona="Nombre persona cinco">
+          <span class="equipo-card__inner">
+            <span id="equipo-frente-05" class="equipo-card__face equipo-card__front" aria-hidden="false">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__photo">
+                <span class="equipo-card__photo-fallback" aria-hidden="true">Fotografía pendiente</span>
+                <img src="images/equipo/persona-05.webp" alt="Fotografía de Nombre persona cinco" draggable="false" loading="lazy" decoding="async">
+              </span>
+              <span class="equipo-card__information">
+                <span class="equipo-card__name">Esteban Maldonado</span>
+                <span class="equipo-card__role">QA Tester</span>
+                <button class="equipo-card__toggle equipo-card__toggle--front" type="button" data-equipo-toggle aria-controls="equipo-reverso-05" aria-expanded="false" aria-label="Ver frase de Nombre persona cinco">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                  <span>Ver frase</span>
+                </button>
+              </span>
+            </span>
+            <span id="equipo-reverso-05" class="equipo-card__face equipo-card__back" aria-hidden="true">
+              <svg class="equipo-card__mesh" viewBox="0 0 260 360" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-10 35 L55 0 L118 62 L196 8 L270 55 M-20 310 L55 238 L130 365 L196 260 L275 325 M55 0 L55 238 M118 62 L196 260 M196 8 L270 55 L196 260 L275 325" />
+              </svg>
+              <span class="equipo-card__quote">Puedo hacer esto todo el día.</span>
+              <button class="equipo-card__toggle equipo-card__toggle--back" type="button" data-equipo-toggle aria-controls="equipo-frente-05" aria-expanded="false" aria-label="Volver a la fotografía de Nombre persona cinco" tabindex="-1">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 0-14.9-4M4 4v4h4M4 12a8 8 0 0 0 14.9 4M20 20v-4h-4" /></svg>
+                <span>Volver</span>
+              </button>
+            </span>
+          </span>
+        </article>
+      </div>
+      </div>
     </section>
 
     <section id="proyecto" class="work-band work-band--light" aria-labelledby="titulo-proyecto">
@@ -997,21 +2487,270 @@
         <span>Nuestro Proyecto</span>
         <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M0 0 L20 21 L0 42" /></svg>
       </h2>
+
+      <div class="proyecto-minimalista">
+        <div class="proyecto-minimalista__visual">
+          <img src="favicon.svg" alt="Logo BASDELWEB" class="proyecto-minimalista__icon" draggable="false">
+        </div>
+        <div class="proyecto-minimalista__contenido">
+          <p class="proyecto-minimalista__descripcion">
+            Como estudiantes de Ingeniería en Informática y Sistemas de la Universidad Rafael Landívar, construimos esta plataforma enfocándonos en un código semántico, estructurado y de alto rendimiento. Nuestro objetivo es dominar la arquitectura frontend asegurando escalabilidad y diseño responsive.
+          </p>
+          <div class="proyecto-minimalista__tecnologias">
+            <button
+              type="button"
+              class="proyecto-tech is-active"
+              data-tech="html"
+              aria-pressed="true">
+              <svg class="proyecto-tech__mesh" viewBox="0 0 180 54" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-8 8 L25 1 L49 19 L79 -5 L109 15 L145 3 L188 24 M-5 43 L25 1 M-5 43 L49 19 L75 50 L109 15 L137 46 L188 24 M49 19 L109 15 M75 50 L137 46 M145 3 L137 46" />
+              </svg>
+              <svg class="proyecto-tech__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16l-1.5 14-6.5 3-6.5-3L4 5z" />
+                <path d="M8 9h8" />
+              </svg>
+              <span class="proyecto-tech__label">HTML5</span>
+            </button>
+            <button
+              type="button"
+              class="proyecto-tech"
+              data-tech="css"
+              aria-pressed="false">
+              <svg class="proyecto-tech__mesh" viewBox="0 0 180 54" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-8 8 L25 1 L49 19 L79 -5 L109 15 L145 3 L188 24 M-5 43 L25 1 M-5 43 L49 19 L75 50 L109 15 L137 46 L188 24 M49 19 L109 15 M75 50 L137 46 M145 3 L137 46" />
+              </svg>
+              <svg class="proyecto-tech__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6h12l-1 12-5 2-5-2L6 6z" />
+                <path d="M8 10h8" />
+              </svg>
+              <span class="proyecto-tech__label">CSS3</span>
+            </button>
+            <button
+              type="button"
+              class="proyecto-tech"
+              data-tech="javascript"
+              aria-pressed="false">
+              <svg class="proyecto-tech__mesh" viewBox="0 0 180 54" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-8 8 L25 1 L49 19 L79 -5 L109 15 L145 3 L188 24 M-5 43 L25 1 M-5 43 L49 19 L75 50 L109 15 L137 46 L188 24 M49 19 L109 15 M75 50 L137 46 M145 3 L137 46" />
+              </svg>
+              <svg class="proyecto-tech__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5h8" />
+                <path d="M8 19h8" />
+                <path d="M12 5v14" />
+              </svg>
+              <span class="proyecto-tech__label">JavaScript</span>
+            </button>
+            <button
+              type="button"
+              class="proyecto-tech"
+              data-tech="git"
+              aria-pressed="false">
+              <svg class="proyecto-tech__mesh" viewBox="0 0 180 54" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-8 8 L25 1 L49 19 L79 -5 L109 15 L145 3 L188 24 M-5 43 L25 1 M-5 43 L49 19 L75 50 L109 15 L137 46 L188 24 M49 19 L109 15 M75 50 L137 46 M145 3 L137 46" />
+              </svg>
+              <svg class="proyecto-tech__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 4v16" />
+                <path d="M7 7l10 10" />
+                <path d="M17 7L7 17" />
+              </svg>
+              <span class="proyecto-tech__label">Git / GitHub</span>
+            </button>
+            <button
+              type="button"
+              class="proyecto-tech proyecto-tech--wide"
+              data-tech="arquitectura"
+              aria-pressed="false">
+              <svg class="proyecto-tech__mesh" viewBox="0 0 180 54" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M-8 8 L25 1 L49 19 L79 -5 L109 15 L145 3 L188 24 M-5 43 L25 1 M-5 43 L49 19 L75 50 L109 15 L137 46 L188 24 M49 19 L109 15 M75 50 L137 46 M145 3 L137 46" />
+              </svg>
+              <svg class="proyecto-tech__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 8h14" />
+                <path d="M8 8v10" />
+                <path d="M16 8v10" />
+                <path d="M5 18h14" />
+              </svg>
+              <span class="proyecto-tech__label">Arquitectura Web</span>
+            </button>
+          </div>
+
+          <div
+            class="proyecto-minimalista__detalle"
+            id="detalle-tecnologia"
+            aria-live="polite"
+          >
+            <div class="proyecto-minimalista__detalle-contenido" id="detalle-contenido">
+              <h4
+                class="proyecto-minimalista__detalle-titulo"
+                id="detalle-titulo">
+                Estructura semántica
+              </h4>
+
+              <p
+                class="proyecto-minimalista__detalle-texto"
+                id="detalle-texto">
+                Utilizamos HTML5 para organizar el contenido de la landing mediante
+                una estructura clara, semántica y accesible.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
 
   <footer id="contacto" class="work-band work-band--dark contact-footer" aria-labelledby="titulo-contacto">
-    <div id="footer-logo-container" class="footer-logo-container"></div>
+    <div class="footer-logo-column">
+      <div id="footer-logo-container" class="footer-logo-container"></div>
+      <nav class="footer-nav" aria-label="Navegación del pie de página">
+        <a href="#equipo">NUESTRO EQUIPO</a>
+        <a href="#proyecto">NUESTRO PROYECTO</a>
+        <a href="#contacto">CONTACTO</a>
+      </nav>
+    </div>
     <div class="contact-workspace">
-      <h2 id="titulo-contacto" class="band-title">
-        <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M20 0 L0 21 L20 42" /></svg>
-        <span>Contacto</span>
-        <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M0 0 L20 21 L0 42" /></svg>
-      </h2>
+      <div class="contact-content">
+        <h2 id="titulo-contacto" class="band-title">
+          <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M20 0 L0 21 L20 42" /></svg>
+          <span>Contacto</span>
+          <svg class="band-title__bracket" viewBox="0 0 20 42" aria-hidden="true"><path d="M0 0 L20 21 L0 42" /></svg>
+        </h2>
+
+        <ul class="contact-grid" aria-label="Contacto de cada integrante del equipo">
+
+          <li class="contact-card" style="--contact-delay: 0ms;">
+            <svg class="contact-card__mesh" viewBox="0 0 260 140" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 20 L60 5 L110 40 L170 10 L270 35 M-10 110 L60 90 L120 125 L190 85 L270 115 M60 5 L60 90 M170 10 L190 85" />
+            </svg>
+            <span class="contact-card__name">Javier Castellanos</span>
+            <span class="contact-card__role">
+              <svg class="contact-card__role-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16v16H4z" />
+                <path d="M8 8h8v8H8z" />
+              </svg>
+              <span>UX/UI Designer</span>
+            </span>
+            <span class="contact-card__links">
+              <a class="contact-link" href="https://github.com/jacastellanoso" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Javier Castellanos">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6" /></svg>
+                <span>GitHub</span>
+              </a>
+              <a class="contact-link" href="mailto::jacastellanoso@correo.url.edu.gt" aria-label="Correo de Javier Castellanos">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM22 6l-10 7L2 6" /></svg>
+                <span>Correo</span>
+              </a>
+            </span>
+          </li>
+
+          <li class="contact-card" style="--contact-delay: 90ms;">
+            <svg class="contact-card__mesh" viewBox="0 0 260 140" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 20 L60 5 L110 40 L170 10 L270 35 M-10 110 L60 90 L120 125 L190 85 L270 115 M60 5 L60 90 M170 10 L190 85" />
+            </svg>
+            <span class="contact-card__name">Gerardo Avila</span>
+            <span class="contact-card__role">
+              <svg class="contact-card__role-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m8 9-4 3 4 3" />
+                <path d="m16 9 4 3-4 3" />
+                <path d="m14 5-4 14" />
+              </svg>
+              <span>Frontend Developer</span>
+            </span>
+            <span class="contact-card__links">
+              <a class="contact-link" href="https://github.com/gjavila1" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Gerardo Ávila">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6" /></svg>
+                <span>GitHub</span>
+              </a>
+              <a class="contact-link" href="mailto:gjavila@correo.url.edu.gt" aria-label="Correo de Gerardo Ávila">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM22 6l-10 7L2 6" /></svg>
+                <span>Correo</span>
+              </a>
+            </span>
+          </li>
+
+          <li class="contact-card" style="--contact-delay: 180ms;">
+            <svg class="contact-card__mesh" viewBox="0 0 260 140" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 20 L60 5 L110 40 L170 10 L270 35 M-10 110 L60 90 L120 125 L190 85 L270 115 M60 5 L60 90 M170 10 L190 85" />
+            </svg>
+            <span class="contact-card__name">Adrián Escalón</span>
+            <span class="contact-card__role">
+              <svg class="contact-card__role-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              <span>Project Manager</span>
+            </span>
+            <span class="contact-card__links">
+              <a class="contact-link" href="https://github.com/AdrianE111" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Adrián Esteban Escalón Illescas">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6" /></svg>
+                <span>GitHub</span>
+              </a>
+              <a class="contact-link" href="mailto:aeescalon@correo.url.edu.gt" aria-label="Correo de Adrián Esteban Escalón Illescas">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM22 6l-10 7L2 6" /></svg>
+                <span>Correo</span>
+              </a>
+            </span>
+          </li>
+
+          <li class="contact-card" style="--contact-delay: 270ms;">
+            <svg class="contact-card__mesh" viewBox="0 0 260 140" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 20 L60 5 L110 40 L170 10 L270 35 M-10 110 L60 90 L120 125 L190 85 L270 115 M60 5 L60 90 M170 10 L190 85" />
+            </svg>
+            <span class="contact-card__name">José Carlos Mendizábal</span>
+           <span class="contact-card__role">
+              <svg class="contact-card__role-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <ellipse cx="12" cy="6" rx="7" ry="3" />
+                <path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
+                <path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+              </svg>
+              <span>Backend Developer</span>
+            </span>
+            <span class="contact-card__links">
+              <a class="contact-link" href="https://github.com/JCMENDI" target="_blank" rel="noopener noreferrer" aria-label="GitHub de José Carlos Mendizábal Huertas">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6" /></svg>
+                <span>GitHub</span>
+              </a>
+              <a class="contact-link" href="mailto:jcmendizabalh@correo.url.edu.gt" aria-label="Correo de José Carlos Mendizábal Huertas">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM22 6l-10 7L2 6" /></svg>
+                <span>Correo</span>
+              </a>
+            </span>
+          </li>
+
+          <li class="contact-card" style="--contact-delay: 360ms;">
+            <svg class="contact-card__mesh" viewBox="0 0 260 140" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 20 L60 5 L110 40 L170 10 L270 35 M-10 110 L60 90 L120 125 L190 85 L270 115 M60 5 L60 90 M170 10 L190 85" />
+            </svg>
+            <span class="contact-card__name">Esteban Maldonado</span>
+            <span class="contact-card__role">
+              <svg class="contact-card__role-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="m7 12 3 3 7-7" />
+              </svg>
+              <span>QA Tester</span>
+            </span>
+            <span class="contact-card__links">
+              <a class="contact-link" href="https://github.com/Ejmaldonadov" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Esteban Maldonado">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6" /></svg>
+                <span>GitHub</span>
+              </a>
+              <a class="contact-link" href="mailto:ejmaldonadov@correo.url.edu.gt " aria-label="Correo de Esteban Maldonado">
+                <svg class="contact-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM22 6l-10 7L2 6" /></svg>
+                <span>Correo</span>
+              </a>
+            </span>
+          </li>
+
+        </ul>
+      </div>
     </div>
   </footer>
-
+  <div class="copyright-bar">
+    <span class="copyright-bar__text">
+      <span>Todos los derechos reservados</span>
+      <span class="copyright-bar__group"><span class="copyright-bar__symbol">&copy;</span>&nbsp;2026</span>
+      <span class="copyright-bar__group">- BASDELWEB<span class="copyright-bar__symbol">&reg;</span></span>
+    </span>
+  </div>
   <script>
     "use strict";
 
@@ -1019,6 +2758,11 @@
     const logo = document.querySelector(".logo");
     const homeReload = document.getElementById("home-reload");
     const introText = document.getElementById("intro-text");
+    const introElements = document.getElementById("intro-elements");
+    const introPrefix = document.getElementById("intro-prefix");
+    const introSuffix = document.getElementById("intro-suffix");
+    const introAccent = document.getElementById("intro-accent");
+    const introCursor = document.getElementById("intro-cursor");
     const officialLogoContainer = document.getElementById("official-logo-container");
     const footerLogoContainer = document.getElementById("footer-logo-container");
     const menuToggle = document.getElementById("menu-toggle");
@@ -1049,6 +2793,7 @@
       3: [0, 0, 680, 135],
       4: [0, 0, 680, 280]
     });
+    const introViewBox = Object.freeze([0, 0, 1000, 140]);
     const normalLayout = {
       "bas-b": { x: 86.12, y: 108 },
       "bas-a": { x: 142.42, y: 108 },
@@ -1103,6 +2848,109 @@
       );
     }
 
+    function measureSvgText(element) {
+      return element.textContent ? element.getComputedTextLength() : 0;
+    }
+
+    function renderIntroFrame({ prefix, basCount, suffix, accented, cursorVisible }) {
+      introPrefix.textContent = prefix;
+      introSuffix.textContent = suffix;
+
+      const layout = cloneLayout(layouts[2]);
+      elementIds.forEach((id) => {
+        layout[id].opacity = 0;
+      });
+
+      const baseline = 100;
+      const bracketY = 43;
+      const bracketScale = 1.35;
+      const bracketWidth = 20 * bracketScale;
+      const outerGap = 16;
+      const wordGap = 12;
+      const cursorGap = cursorVisible ? 9 : 0;
+      const cursorWidth = cursorVisible ? 5 : 0;
+      const prefixWidth = measureSvgText(introPrefix);
+      const suffixWidth = measureSvgText(introSuffix);
+      const letterIds = ["bas-b", "bas-a", "bas-s"];
+      const letterWidths = letterIds.map((id) => elements[id].getBBox().width);
+      const visibleLetterWidth = letterWidths
+        .slice(0, basCount)
+        .reduce((total, width) => total + width, 0);
+      const internalLetterGaps = Math.max(0, basCount - 1) * 2;
+      const prefixGap = prefix && basCount > 0 ? wordGap : 0;
+      const suffixGap = suffix && basCount > 0 ? 2 : 0;
+      const contentWidth = prefixWidth + prefixGap + visibleLetterWidth
+        + internalLetterGaps + suffixGap + suffixWidth;
+      const totalWidth = bracketWidth * 2 + outerGap * 2 + contentWidth
+        + cursorGap + cursorWidth;
+      let x = (introViewBox[2] - totalWidth) / 2;
+
+      layout["bracket-left"] = {
+        ...layout["bracket-left"],
+        x,
+        y: bracketY,
+        scale: bracketScale,
+        opacity: 1
+      };
+      x += bracketWidth + outerGap;
+
+      introPrefix.setAttribute("x", x);
+      introPrefix.setAttribute("y", baseline);
+      introPrefix.setAttribute("opacity", prefix ? "1" : "0");
+      x += prefixWidth + prefixGap;
+
+      letterIds.forEach((id, index) => {
+        const isVisible = index < basCount;
+        layout[id] = {
+          ...layout[id],
+          x,
+          y: baseline,
+          scale: 1,
+          opacity: isVisible ? 1 : 0
+        };
+
+        if (isVisible) {
+          if (id === "bas-a") {
+            introAccent.setAttribute(
+              "transform",
+              `translate(${x + letterWidths[index] * 0.48} ${baseline - 62})`
+            );
+          }
+          x += letterWidths[index] + (index < basCount - 1 ? 2 : 0);
+        }
+      });
+
+      introAccent.setAttribute("opacity", accented && basCount >= 2 ? "1" : "0");
+      x += suffixGap;
+      introSuffix.setAttribute("x", x);
+      introSuffix.setAttribute("y", baseline);
+      introSuffix.setAttribute("opacity", suffix ? "1" : "0");
+      x += suffixWidth;
+
+      introCursor.setAttribute("x", x + cursorGap);
+      introCursor.setAttribute("y", 27);
+      introCursor.setAttribute("opacity", cursorVisible ? "1" : "0");
+      x += cursorGap + cursorWidth + outerGap;
+
+      layout["bracket-right"] = {
+        ...layout["bracket-right"],
+        x,
+        y: bracketY,
+        scale: bracketScale,
+        opacity: 1
+      };
+
+      currentLayout = layout;
+      currentViewBox = [...introViewBox];
+      logo.dataset.state = "intro";
+      applyLayout(currentLayout, currentViewBox);
+
+      const visibleBas = ["B", accented && basCount >= 2 ? "Á" : "A", "S"]
+        .slice(0, basCount)
+        .join("");
+      introText.textContent = `< ${prefix}${visibleBas}${suffix} >`;
+    }
+
     function buildLayouts() {
       const primaryWidth = elements["tagline-primary"].getBBox().width;
       const secondaryWidth = elements["tagline-secondary"].getBBox().width;
@@ -1148,17 +2996,25 @@
         logo.dataset.state = "1";
         header.dataset.phase = "final";
         header.classList.add("is-compact");
+        homeReload.disabled = false;
+        document.documentElement.classList.remove("intro-running");
         applyLayout(currentLayout, currentViewBox);
         updateActiveNavigation();
         document.documentElement.classList.add("logo-ready");
         return;
       }
 
-      currentLayout = cloneLayout(layouts[2]);
-      applyLayout(currentLayout, currentViewBox);
+      currentState = 0;
       logo.classList.add("is-assembling");
       writtenLogoGroups.flat().forEach((id) => {
         elements[id].classList.add("logo-part-pending");
+      });
+      renderIntroFrame({
+        prefix: "",
+        basCount: 0,
+        suffix: "",
+        accented: false,
+        cursorVisible: true
       });
       rememberIntro();
       startIntro();
@@ -1184,8 +3040,9 @@
         const values = {};
 
         keys.forEach((key) => {
-          const startValue = startValues[key] ?? (key === "opacity" ? 1 : 0);
-          const endValue = endValues[key] ?? (key === "opacity" ? 1 : 0);
+          const defaultValue = key === "opacity" || key === "scale" ? 1 : 0;
+          const startValue = startValues[key] ?? defaultValue;
+          const endValue = endValues[key] ?? defaultValue;
           values[key] = interpolate(startValue, endValue, progress);
         });
 
@@ -1204,7 +3061,10 @@
           element.setAttribute("width", values.width);
           element.setAttribute("height", values.height);
         } else {
-          element.setAttribute("transform", `translate(${values.x} ${values.y})`);
+          element.setAttribute(
+            "transform",
+            `translate(${values.x} ${values.y}) scale(${values.scale ?? 1})`
+          );
         }
 
         element.setAttribute("opacity", values.opacity ?? 1);
@@ -1251,7 +3111,7 @@
 
     function animateToState(targetState, requestedDuration = 700) {
       if (!layouts || targetState === currentState) {
-        return;
+        return Promise.resolve();
       }
 
       if (animationFrame !== null) {
@@ -1269,54 +3129,142 @@
       currentState = targetState;
       logo.dataset.state = String(targetState);
 
-      function renderFrame(now) {
-        const linearProgress = duration === 0 ? 1 : Math.min((now - startedAt) / duration, 1);
-        const easedProgress = linearProgress * linearProgress * linearProgress
-          * (linearProgress * (linearProgress * 6 - 15) + 10);
+      return new Promise((resolve) => {
+        function renderFrame(now) {
+          const linearProgress = duration === 0 ? 1 : Math.min((now - startedAt) / duration, 1);
+          const easedProgress = linearProgress * linearProgress * linearProgress
+            * (linearProgress * (linearProgress * 6 - 15) + 10);
 
-        currentLayout = interpolateLayout(startLayout, targetLayout, easedProgress);
-        currentViewBox = startViewBox.map((value, index) => (
-          interpolate(value, targetViewBox[index], easedProgress)
-        ));
-        applyLayout(currentLayout, currentViewBox);
-
-        if (linearProgress < 1) {
-          animationFrame = requestAnimationFrame(renderFrame);
-        } else {
-          currentLayout = cloneLayout(targetLayout);
-          currentViewBox = [...targetViewBox];
-          animationFrame = null;
+          currentLayout = interpolateLayout(startLayout, targetLayout, easedProgress);
+          currentViewBox = startViewBox.map((value, index) => (
+            interpolate(value, targetViewBox[index], easedProgress)
+          ));
           applyLayout(currentLayout, currentViewBox);
-        }
-      }
 
-      animationFrame = requestAnimationFrame(renderFrame);
+          if (linearProgress < 1) {
+            animationFrame = requestAnimationFrame(renderFrame);
+          } else {
+            currentLayout = cloneLayout(targetLayout);
+            currentViewBox = [...targetViewBox];
+            animationFrame = null;
+            applyLayout(currentLayout, currentViewBox);
+            resolve();
+          }
+        }
+
+        animationFrame = requestAnimationFrame(renderFrame);
+      });
     }
 
     function wait(duration) {
       return new Promise((resolve) => window.setTimeout(resolve, duration));
     }
 
-    async function typeText(text, delay) {
-      introText.textContent = "";
+    async function typeIntroPrefix(text, delay) {
+      let prefix = "";
 
       for (const character of text) {
-        introText.textContent += character;
+        prefix += character;
+        renderIntroFrame({ prefix, basCount: 0, suffix: "", accented: false, cursorVisible: true });
+        await wait(delay);
+      }
+
+      return prefix;
+    }
+
+    async function revealIntroBas(prefix, delay) {
+      for (let basCount = 1; basCount <= 3; basCount += 1) {
+        renderIntroFrame({
+          prefix,
+          basCount,
+          suffix: "",
+          accented: basCount >= 2,
+          cursorVisible: true
+        });
         await wait(delay);
       }
     }
 
-    async function removeLeadingText(remainingText, delay) {
-      while (introText.textContent.length > remainingText.length) {
-        introText.textContent = introText.textContent.slice(1);
+    async function typeIntroSuffix(prefix, text, delay) {
+      let suffix = "";
+
+      for (const character of text) {
+        suffix += character;
+        renderIntroFrame({ prefix, basCount: 3, suffix, accented: true, cursorVisible: true });
+        await wait(delay);
+      }
+
+      return suffix;
+    }
+
+    async function removeIntroPrefix(prefix, suffix, delay) {
+      let remainingPrefix = prefix;
+
+      while (remainingPrefix) {
+        remainingPrefix = remainingPrefix.slice(1);
+        renderIntroFrame({
+          prefix: remainingPrefix,
+          basCount: 3,
+          suffix,
+          accented: true,
+          cursorVisible: true
+        });
         await wait(delay);
       }
     }
 
-    async function removeTrailingText(remainingText, delay) {
-      while (introText.textContent.length > remainingText.length) {
-        introText.textContent = introText.textContent.slice(0, -1);
+    async function removeIntroSuffix(suffix, delay) {
+      let remainingSuffix = suffix;
+
+      while (remainingSuffix) {
+        remainingSuffix = remainingSuffix.slice(0, -1);
+        renderIntroFrame({
+          prefix: "",
+          basCount: 3,
+          suffix: remainingSuffix,
+          accented: true,
+          cursorVisible: true
+        });
         await wait(delay);
+      }
+    }
+
+    async function moveLogoToCompactHeader() {
+      const duration = 1500;
+      const firstRect = logo.getBoundingClientRect();
+
+      header.classList.add("is-measuring-compact");
+      header.dataset.phase = "final";
+      header.classList.add("is-compact");
+      const lastRect = logo.getBoundingClientRect();
+      header.classList.remove("is-measuring-compact");
+
+      const deltaX = firstRect.left - lastRect.left;
+      const deltaY = firstRect.top - lastRect.top;
+      const scaleX = firstRect.width / Math.max(lastRect.width, 1);
+      const scaleY = firstRect.height / Math.max(lastRect.height, 1);
+      const layoutAnimation = animateToState(1, duration);
+
+      if (typeof logo.animate === "function") {
+        const positionAnimation = logo.animate(
+          [
+            { transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})` },
+            { transform: "translate(0, 0) scale(1, 1)" }
+          ],
+          {
+            duration,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            fill: "both"
+          }
+        );
+
+        await Promise.all([
+          layoutAnimation,
+          positionAnimation.finished.catch(() => undefined)
+        ]);
+        positionAnimation.cancel();
+      } else {
+        await layoutAnimation;
       }
     }
 
@@ -1669,10 +3617,10 @@
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reduceMotion) {
-        currentState = 4;
-        currentLayout = cloneLayout(layouts[4]);
-        currentViewBox = [...viewBoxes[4]];
-        logo.dataset.state = "4";
+        currentState = 1;
+        currentLayout = cloneLayout(layouts[1]);
+        currentViewBox = [...viewBoxes[1]];
+        logo.dataset.state = "1";
         logo.classList.remove("is-assembling");
         writtenLogoGroups.flat().forEach((id) => {
           elements[id].classList.remove("logo-part-pending", "logo-part-written");
@@ -1680,33 +3628,51 @@
         header.dataset.phase = "final";
         header.classList.add("is-compact");
         applyLayout(currentLayout, currentViewBox);
+        homeReload.disabled = false;
+        document.documentElement.classList.remove("intro-running");
+        document.documentElement.classList.add("intro-complete");
+        updateActiveNavigation();
         return;
       }
 
-      await typeText("BIENVENIDO A BÁSICOS", 42);
-      await wait(100);
-      await removeLeadingText("BÁSICOS", 20);
-      await wait(80);
-      await removeTrailingText("BÁS", 55);
+      const prefix = await typeIntroPrefix("BIENVENIDO A ", 42);
+      await revealIntroBas(prefix, 75);
+      const suffix = await typeIntroSuffix(prefix, "ICOS", 58);
+      await wait(140);
+      await removeIntroPrefix(prefix, suffix, 24);
+      await wait(90);
+      await removeIntroSuffix(suffix, 58);
       await wait(120);
-      introText.textContent = "BAS";
+      renderIntroFrame({
+        prefix: "",
+        basCount: 3,
+        suffix: "",
+        accented: false,
+        cursorVisible: true
+      });
       await wait(180);
+      renderIntroFrame({
+        prefix: "",
+        basCount: 3,
+        suffix: "",
+        accented: false,
+        cursorVisible: false
+      });
+      introElements.style.display = "none";
 
       header.dataset.phase = "logo";
-      await wait(350);
+      await animateToState(2, 1100);
       await writeRemainingLogo();
-      await wait(250);
-
+      await animateToState(3, 1150);
       header.dataset.phase = "expanded";
-      animateToState(4, 2400);
-      await wait(2450);
+      await animateToState(4, 2100);
+      await moveLogoToCompactHeader();
 
-      header.dataset.phase = "final";
-      await wait(100);
-      header.classList.add("is-compact");
-      animateToState(1, 850);
+      introText.textContent = "Presentación completada";
+      homeReload.disabled = false;
+      document.documentElement.classList.remove("intro-running");
+      document.documentElement.classList.add("intro-complete");
       updateActiveNavigation();
-      await wait(850);
     }
 
     homeReload.addEventListener("click", () => {
@@ -1750,5 +3716,187 @@
     initializeLogoWireframe();
     document.fonts.ready.then(buildLayouts);
   </script>
+  
+  <script>
+  const tecnologiasProyecto = {
+    html: {
+      titulo: "Estructura semántica",
+      texto:
+        "Utilizamos HTML5 para organizar el contenido de la landing mediante una estructura clara, semántica y accesible."
+    },
+
+    css: {
+      titulo: "Diseño y adaptación",
+      texto:
+        "CSS3 define la identidad visual de BASDELWEB, las animaciones y el diseño responsive para adaptar la experiencia a diferentes pantallas."
+    },
+
+    javascript: {
+      titulo: "Interacción",
+      texto:
+        "JavaScript añade comportamiento e interacción a la landing, permitiendo crear una experiencia más dinámica para quien visita la página."
+    },
+
+    git: {
+      titulo: "Trabajo colaborativo",
+      texto:
+        "Git y GitHub nos permiten trabajar en ramas independientes, controlar los cambios y posteriormente integrar cada historia de usuario mediante Pull Requests."
+    },
+
+    arquitectura: {
+      titulo: "Construcción organizada",
+      texto:
+        "Organizamos la landing en componentes y secciones independientes para mantener una estructura clara, escalable y fácil de mantener."
+    }
+  };
+
+  const botonesTecnologia = document.querySelectorAll(".proyecto-tech");
+  const detalleContenido = document.querySelector("#detalle-contenido");
+  const detalleTitulo = document.querySelector("#detalle-titulo");
+  const detalleTexto = document.querySelector("#detalle-texto");
+
+  const activarTecnologia = (boton) => {
+    const tecnologia = tecnologiasProyecto[boton.dataset.tech];
+
+    if (!tecnologia) {
+      return;
+    }
+
+    botonesTecnologia.forEach((item) => {
+      item.classList.remove("is-active");
+      item.setAttribute("aria-pressed", "false");
+    });
+
+    boton.classList.add("is-active");
+    boton.setAttribute("aria-pressed", "true");
+
+    if (detalleContenido) {
+      detalleContenido.classList.add("is-changing");
+    }
+
+    window.setTimeout(() => {
+      detalleTitulo.textContent = tecnologia.titulo;
+      detalleTexto.textContent = tecnologia.texto;
+
+      if (detalleContenido) {
+        detalleContenido.classList.remove("is-changing");
+      }
+    }, 140);
+  };
+
+  botonesTecnologia.forEach((boton) => {
+    boton.addEventListener("click", () => {
+      activarTecnologia(boton);
+    });
+  });
+</script>
+
+<script>
+  const tarjetasEquipo = Array.from(document.querySelectorAll("[data-equipo-card]"));
+  const imagenesEquipo = document.querySelectorAll(".equipo-card__photo img");
+
+  const actualizarEstadoImagenEquipo = (imagen) => {
+    const contenedor = imagen.closest(".equipo-card__photo");
+    const imagenDisponible = imagen.complete && imagen.naturalWidth > 0;
+
+    contenedor.classList.toggle("is-missing", !imagenDisponible);
+  };
+
+  imagenesEquipo.forEach((imagen) => {
+    imagen.addEventListener("load", () => actualizarEstadoImagenEquipo(imagen));
+    imagen.addEventListener("error", () => actualizarEstadoImagenEquipo(imagen));
+
+    if (imagen.complete) {
+      actualizarEstadoImagenEquipo(imagen);
+    }
+  });
+
+  const actualizarTarjetaEquipo = (tarjeta, volteada) => {
+    const frente = tarjeta.querySelector(".equipo-card__front");
+    const reverso = tarjeta.querySelector(".equipo-card__back");
+    const botonFrente = tarjeta.querySelector(".equipo-card__toggle--front");
+    const botonReverso = tarjeta.querySelector(".equipo-card__toggle--back");
+
+    tarjeta.classList.toggle("is-flipped", volteada);
+    frente.setAttribute("aria-hidden", String(volteada));
+    reverso.setAttribute("aria-hidden", String(!volteada));
+
+    botonFrente.setAttribute("aria-expanded", String(volteada));
+    botonReverso.setAttribute("aria-expanded", String(volteada));
+    botonFrente.tabIndex = volteada ? -1 : 0;
+    botonReverso.tabIndex = volteada ? 0 : -1;
+  };
+
+  tarjetasEquipo.forEach((tarjeta) => {
+    actualizarTarjetaEquipo(tarjeta, false);
+
+    tarjeta.querySelectorAll("[data-equipo-toggle]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const seVolteara = !tarjeta.classList.contains("is-flipped");
+
+        if (seVolteara) {
+          tarjetasEquipo.forEach((otraTarjeta) => {
+            if (otraTarjeta !== tarjeta) {
+              actualizarTarjetaEquipo(otraTarjeta, false);
+            }
+          });
+        }
+
+        actualizarTarjetaEquipo(tarjeta, seVolteara);
+
+        const botonDestino = tarjeta.querySelector(
+          seVolteara
+            ? ".equipo-card__toggle--back"
+            : ".equipo-card__toggle--front"
+        );
+
+        window.requestAnimationFrame(() => {
+          botonDestino.focus({ preventScroll: true });
+        });
+      });
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      const tarjetaActiva = tarjetasEquipo.find((tarjeta) =>
+        tarjeta.classList.contains("is-flipped")
+      );
+
+      if (tarjetaActiva) {
+        actualizarTarjetaEquipo(tarjetaActiva, false);
+        tarjetaActiva
+          .querySelector(".equipo-card__toggle--front")
+          .focus({ preventScroll: true });
+      }
+    }
+  });
+  document.querySelectorAll(".equipo-card__photo img").forEach((imagen) => {
+    imagen.addEventListener("contextmenu", (event) => event.preventDefault());
+  });
+</script>
+<script>
+  document.querySelectorAll('a[href^="mailto:"]').forEach((enlace) => {
+    enlace.addEventListener("click", async () => {
+      const correo = enlace.href.replace("mailto:", "").split("?")[0];
+      const etiqueta = enlace.querySelector(".contact-link__label") || enlace.querySelector("span");
+      const textoOriginal = etiqueta.textContent;
+
+      try {
+        await navigator.clipboard.writeText(correo);
+      } catch (error) {
+        console.info("No fue posible copiar el correo automáticamente.", error);
+      }
+
+      enlace.classList.add("is-copied");
+      etiqueta.textContent = "¡Copiado!";
+
+      window.setTimeout(() => {
+        enlace.classList.remove("is-copied");
+        etiqueta.textContent = textoOriginal;
+      }, 1800);
+    });
+  });
+</script>
 </body>
 </html>
